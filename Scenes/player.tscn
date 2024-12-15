@@ -1,9 +1,62 @@
-[gd_scene load_steps=2 format=3 uid="uid://dv6kjjc0e63lr"]
+[gd_scene load_steps=9 format=3 uid="uid://dv6kjjc0e63lr"]
+
+[ext_resource type="Script" path="res://Scripts/player.gd" id="1_5x0ah"]
+[ext_resource type="Texture2D" uid="uid://cdunb426wrysp" path="res://Assets/New Piskel.png" id="2_syskm"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ikuex"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_fx7q5"]
+atlas = ExtResource("2_syskm")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oy4ux"]
+atlas = ExtResource("2_syskm")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_35b2f"]
+atlas = ExtResource("2_syskm")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6v3rk"]
+atlas = ExtResource("2_syskm")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_uhsie"]
+animations = [{
+"frames": [{
+"duration": 5.0,
+"texture": SubResource("AtlasTexture_fx7q5")
+}, {
+"duration": 5.0,
+"texture": SubResource("AtlasTexture_oy4ux")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_35b2f")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_6v3rk")
+}],
+"loop": true,
+"name": &"move",
+"speed": 5.0
+}]
+
 [node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_5x0ah")
 
 [node name="Hitbox" type="CollisionShape2D" parent="."]
+position = Vector2(0, -15)
+scale = Vector2(0.559471, 1.64933)
 shape = SubResource("CircleShape2D_ikuex")
 one_way_collision_margin = 32.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(2, -15)
+sprite_frames = SubResource("SpriteFrames_uhsie")
+animation = &"idle"
+frame_progress = 0.864496

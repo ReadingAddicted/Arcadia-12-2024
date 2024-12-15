@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://qweldd7rmh6"]
+
+[ext_resource type="Texture2D" uid="uid://jorvr0d6y1y5" path="res://Assets/Temporary background.jpg" id="1_48077"]
+[ext_resource type="PackedScene" uid="uid://dv6kjjc0e63lr" path="res://Scenes/player.tscn" id="1_p0k7p"]
+
+[node name="Game" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_48077")
+
+[node name="Player" parent="." instance=ExtResource("1_p0k7p")]
+scale = Vector2(1.5, 1.5)
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+drag_left_margin = 0.1
+drag_top_margin = 0.1
+drag_right_margin = 0.1
+drag_bottom_margin = 0.1
