@@ -6,8 +6,8 @@ extends Node2D
 func play(sound,where=Vector2(0,0)):
 	audioManager.play(sound,where)
 
-func playPool(soundA,where=Vector2(0,0)):
-	play(soundA[rng.randi_range(0,soundA.size()-1)],where)
+func playPool(soundA:Array[AudioStream],where=Vector2(0,0)):
+	play(soundA.pick_random(),where)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
