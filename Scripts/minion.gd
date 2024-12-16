@@ -92,7 +92,7 @@ func _physics_process(delta: float) -> void:
 		play_walk_animation(velocity)
 
 func play_walk_animation(direction):
-	$AnimatedSprite2D.flip_h = direction.x < 0
+	$Sprite.flip_h = direction.x < 0
 
 # Detection area signals
 func _on_detection_area_body_entered(body):

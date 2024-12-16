@@ -1,13 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://qweldd7rmh6"]
+[gd_scene load_steps=5 format=3 uid="uid://qweldd7rmh6"]
 
-[ext_resource type="Script" path="res://Scripts/game.gd" id="1_gasgt"]
 [ext_resource type="PackedScene" uid="uid://dv6kjjc0e63lr" path="res://Scenes/player.tscn" id="1_p0k7p"]
 [ext_resource type="Texture2D" uid="uid://deiix7f5v06rw" path="res://Sprites/board7.png" id="1_y02fr"]
 [ext_resource type="PackedScene" path="res://Scenes/AudioManager.tscn" id="2_syhbx"]
-[ext_resource type="PackedScene" uid="uid://f1br0b84x7lg" path="res://Scenes/minion.tscn" id="5_4snln"]
+[ext_resource type="PackedScene" uid="uid://bdhxujrrnfael" path="res://Scenes/minion_spawner.tscn" id="4_s7gn0"]
 
 [node name="Game" type="Node2D"]
-script = ExtResource("1_gasgt")
 
 [node name="Border" type="StaticBody2D" parent="."]
 scale = Vector2(50, 50)
@@ -33,11 +31,6 @@ drag_bottom_margin = 0.1
 [node name="Player" parent="." instance=ExtResource("1_p0k7p")]
 scale = Vector2(1.5, 1.5)
 
-[node name="Minion" parent="." instance=ExtResource("5_4snln")]
-position = Vector2(219, -27)
-
-[node name="Minion2" parent="." instance=ExtResource("5_4snln")]
-position = Vector2(180, 271)
-
-[node name="Minion3" parent="." instance=ExtResource("5_4snln")]
-position = Vector2(-475, -31)
+[node name="minionSpawner" parent="." instance=ExtResource("4_s7gn0")]
+position = Vector2(-259, 134)
+scale = Vector2(4, 4)
