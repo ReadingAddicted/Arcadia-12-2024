@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 # Assets
-@onready var soundSwish=[preload("res://Sounds/wingedmacewoosh1.wav"),
+@onready var soundSwish:Array[AudioStream]=[preload("res://Sounds/wingedmacewoosh1.wav"),
 						 preload("res://Sounds/wingedmacewoosh2.wav"),
 						 preload("res://Sounds/wingedmacewoosh3.wav")]
 
@@ -10,11 +10,12 @@ var targetVelocity=Vector2.ZERO
 var currentVelocity=Vector2.ZERO
 @onready var game:Node2D=get_parent()
 @onready var camera:Camera2D=game.get_node("Camera")
+@onready var baseScale=scale
 
 func play(sound,where=Vector2(0,0)):
 	game.play(sound,where)
 
-func playPool(soundA,where=Vector2(0,0)):
+func playPool(soundA:Array[AudioStream],where=Vector2(0,0)):
 	game.playPool(soundA,where)
 
 const PLAYER_DAMAGE_POINT_BASE=0.5
@@ -55,19 +56,23 @@ func _ready():
 	print("ready")
 
 func _process(delta: float) -> void:
-	if attackPhase==PLAYER_ATTACK_PHASE.NONE and Input.get_action_strength("attack")>0:
-		attackPhase=PLAYER_ATTACK_PHASE.LAUNCHED
-		playPool(soundSwish,position)
-		print(position)
 	# Damage rythm
-	if attackPhase!=PLAYER_ATTACK_PHASE.NONE:
+	if attackPhase==PLAYER_ATTACK_PHASE.NONE:
+		scale=lerp(scale,baseScale,delta*10)
+		if Input.get_action_strength("attack")>0:
+			attackPhase=PLAYER_ATTACK_PHASE.LAUNCHED
+			playPool(soundSwish,position)
+			print(position)
+	else:
 		attackTimer+=delta*attackSpeed
 	if attackPhase==PLAYER_ATTACK_PHASE.LAUNCHED:
+		scale=lerp(scale,baseScale*1.2,delta*10)
 		if attackTimer>damagePoint:
 			attackTimer-=damagePoint
 			attackPhase=PLAYER_ATTACK_PHASE.RECOVERY
 			attack() # TODO
 	if attackPhase==PLAYER_ATTACK_PHASE.RECOVERY:
+		scale=lerp(scale,baseScale*0.8,delta*5)
 		if attackTimer>recovery:
 			attackTimer=0
 			attackPhase=PLAYER_ATTACK_PHASE.NONE

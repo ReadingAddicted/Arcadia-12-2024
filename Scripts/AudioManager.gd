@@ -15,15 +15,15 @@ func _ready():
 		p.finished.connect(_on_stream_finished.bind(p))
 		p.bus=bus
 		available=available+[p]
-		print(available)
+		#print(available)
 
 func _on_stream_finished(stream:AudioStream):
 	# When finished playing a stream, make the player available again.
-	print("finished sound")
+	#print("finished sound")
 	available.push_back(stream)
 
 func play(sound:AudioStream,where=Vector2(0,0)):
-	print("started sound")
+	#print("started sound")
 	queue.push_back(sound)
 	positionQueue.push_back(where)
 
@@ -33,6 +33,6 @@ func _process(delta:float):
 	if not queue.is_empty() and not available.is_empty():
 		available[0].set_stream(queue.pop_front())
 		available[0].position=positionQueue.pop_front()
-		print("played at "+str(available[0].position))
+		#print("played at "+str(available[0].position))
 		available[0].play()
 		available.pop_front()
