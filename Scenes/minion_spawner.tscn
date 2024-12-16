@@ -9,15 +9,15 @@ size = Vector2(58.9516, 42.647)
 [node name="minionSpawner" type="StaticBody2D"]
 script = ExtResource("1_dp8vq")
 
-[node name="Sprite" type="Sprite2D" parent="."]
-position = Vector2(5, -32)
-texture = ExtResource("2_i5r22")
-
 [node name="Hitbox" type="CollisionShape2D" parent="."]
-position = Vector2(1.11862, -24.8333)
+position = Vector2(1.19209e-07, -24)
 scale = Vector2(0.776277, 1.13334)
 shape = SubResource("RectangleShape2D_gw2yq")
 one_way_collision_margin = 32.0
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(4, -32)
+texture = ExtResource("2_i5r22")
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 5.0
