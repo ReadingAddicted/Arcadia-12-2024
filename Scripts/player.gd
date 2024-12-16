@@ -1,17 +1,23 @@
 extends CharacterBody2D
 
+const SPEED = 200
+var targetVelocity=Vector2.ZERO
+var currentVelocity=Vector2.ZERO
+@onready var camera:Camera2D=get_parent().get_node("Camera")
 
-const SPEED = 50
-
+func _ready():
+	print("ready")
 
 func _physics_process(delta: float) -> void:
-	var direction = Input.get_vector("move_left","move_right","move_up","move_down")
-	velocity = direction * SPEED
+	targetVelocity=Input.get_vector("move_left","move_right","move_up","move_down")
+	currentVelocity=lerp(currentVelocity,targetVelocity,delta*10)
+	velocity=currentVelocity*SPEED
 	move_and_slide()
-	
-	if direction.length() > 0:
-		play_walk_animation(direction)
+	camera.global_position=lerp(camera.global_position,global_position,delta*10)
+	if velocity.length() > 0:
+		play_walk_animation(velocity)
 	else:
+		currentVelocity=lerp(currentVelocity,targetVelocity,delta*10)
 		play_idle_animation()
 
 func play_walk_animation(direction):
