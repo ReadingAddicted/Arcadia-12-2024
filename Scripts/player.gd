@@ -13,6 +13,8 @@ var currentVelocity=Vector2.ZERO
 @onready var baseScale=scale
 @onready var sprite=$Sprite
 
+var team: bool = false
+
 func play(sound,where=Vector2(0,0)):
 	game.play(sound,where)
 
