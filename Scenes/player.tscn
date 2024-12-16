@@ -55,7 +55,7 @@ scale = Vector2(0.559471, 1.64933)
 shape = SubResource("CircleShape2D_ikuex")
 one_way_collision_margin = 32.0
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
 position = Vector2(2, -15)
 sprite_frames = SubResource("SpriteFrames_uhsie")
 animation = &"idle"

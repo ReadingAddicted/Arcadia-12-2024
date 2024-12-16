@@ -11,6 +11,7 @@ var currentVelocity=Vector2.ZERO
 @onready var game:Node2D=get_parent()
 @onready var camera:Camera2D=game.get_node("Camera")
 @onready var baseScale=scale
+@onready var sprite=$Sprite
 
 func play(sound,where=Vector2(0,0)):
 	game.play(sound,where)
@@ -61,8 +62,6 @@ func _process(delta: float) -> void:
 		scale=lerp(scale,baseScale,delta*10)
 		if Input.get_action_strength("attack")>0:
 			attackPhase=PLAYER_ATTACK_PHASE.LAUNCHED
-			playPool(soundSwish,position)
-			print(position)
 	else:
 		attackTimer+=delta*attackSpeed
 	if attackPhase==PLAYER_ATTACK_PHASE.LAUNCHED:
@@ -71,6 +70,7 @@ func _process(delta: float) -> void:
 			attackTimer-=damagePoint
 			attackPhase=PLAYER_ATTACK_PHASE.RECOVERY
 			attack() # TODO
+			playPool(soundSwish,position)
 	if attackPhase==PLAYER_ATTACK_PHASE.RECOVERY:
 		scale=lerp(scale,baseScale*0.8,delta*5)
 		if attackTimer>recovery:
@@ -81,8 +81,16 @@ func _physics_process(delta: float) -> void:
 	targetVelocity=Input.get_vector("move_left","move_right","move_up","move_down")
 	if attackPhase==PLAYER_ATTACK_PHASE.LAUNCHED:
 		targetVelocity/=3
+		if sprite.flip_h:
+			targetVelocity.x+=0.1
+		else:
+			targetVelocity.x-=0.1
 	if attackPhase==PLAYER_ATTACK_PHASE.RECOVERY:
 		targetVelocity/=4
+		if sprite.flip_h:
+			targetVelocity.x-=0.1
+		else:
+			targetVelocity.x+=0.1
 	currentVelocity=lerp(currentVelocity,targetVelocity,delta*10)
 	velocity=currentVelocity*SPEED
 	move_and_slide()
@@ -94,12 +102,12 @@ func _physics_process(delta: float) -> void:
 		play_idle_animation()
 
 func play_walk_animation(direction):
-	$AnimatedSprite2D.play("move")
+	sprite.play("move")
 	if attackPhase==PLAYER_ATTACK_PHASE.NONE:
 		if direction.x < 0:
-			$AnimatedSprite2D.flip_h = true
+			sprite.flip_h = true
 		if direction.x > 0:
-			$AnimatedSprite2D.flip_h = false
+			sprite.flip_h = false
 
 func play_idle_animation():
-	$AnimatedSprite2D.play("idle")
+	sprite.play("idle")
