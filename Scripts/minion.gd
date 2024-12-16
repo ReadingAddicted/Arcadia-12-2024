@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 const SPEED = 100
+@export var health = 50.0
 var targetVelocity = Vector2.ZERO
 var currentVelocity = Vector2.ZERO
 @onready var game:Node2D = get_parent()
@@ -37,6 +38,7 @@ var currentTarget:Node2D = null
 var detectedEnemies = []
 var inRangeEnemies = []
 var canAttack = false
+var creator: Node2D = null
 
 func resetToDefault():
 	damagePoint = MINION_DAMAGE_POINT_BASE
