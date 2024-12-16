@@ -1,9 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://qweldd7rmh6"]
+[gd_scene load_steps=5 format=3 uid="uid://qweldd7rmh6"]
 
+[ext_resource type="Script" path="res://Scripts/game.gd" id="1_gasgt"]
 [ext_resource type="PackedScene" uid="uid://dv6kjjc0e63lr" path="res://Scenes/player.tscn" id="1_p0k7p"]
 [ext_resource type="Texture2D" uid="uid://deiix7f5v06rw" path="res://Sprites/board7.png" id="1_y02fr"]
+[ext_resource type="PackedScene" uid="uid://doacv6k41inl3" path="res://Scenes/AudioManager.tscn" id="2_syhbx"]
 
 [node name="Game" type="Node2D"]
+script = ExtResource("1_gasgt")
+
+[node name="AudioManager" parent="." instance=ExtResource("2_syhbx")]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_y02fr")
