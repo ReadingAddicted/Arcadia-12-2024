@@ -1,0 +1,48 @@
+[gd_scene load_steps=5 format=3 uid="uid://f1br0b84x7lg"]
+
+[ext_resource type="Script" path="res://Scripts/minion.gd" id="1_f10wd"]
+[ext_resource type="Texture2D" uid="uid://dt183wafk4e7p" path="res://Sprites/minion.png" id="2_gwigt"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ogevg"]
+radius = 14.9789
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_tuc6n"]
+radius = 100.0
+
+[node name="Minion" type="CharacterBody2D"]
+collision_layer = 3
+script = ExtResource("1_f10wd")
+
+[node name="Hitbox" type="CollisionShape2D" parent="."]
+position = Vector2(0, -15)
+scale = Vector2(0.776277, 1.13334)
+shape = SubResource("CircleShape2D_ogevg")
+one_way_collision_margin = 32.0
+
+[node name="AnimatedSprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -15)
+texture = ExtResource("2_gwigt")
+
+[node name="DetectionArea" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="DetectionCircle" type="CollisionShape2D" parent="DetectionArea"]
+position = Vector2(0, -15)
+shape = SubResource("CircleShape2D_tuc6n")
+one_way_collision_margin = 32.0
+
+[node name="AttackArea" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="AttackAreaCircle" type="CollisionShape2D" parent="AttackArea"]
+position = Vector2(0, -15)
+scale = Vector2(0.3, 0.3)
+shape = SubResource("CircleShape2D_tuc6n")
+one_way_collision_margin = 32.0
+
+[connection signal="body_entered" from="DetectionArea" to="." method="_on_detection_area_body_entered"]
+[connection signal="body_exited" from="DetectionArea" to="." method="_on_detection_area_body_exited"]
+[connection signal="body_entered" from="AttackArea" to="." method="_on_attack_area_body_entered"]
+[connection signal="body_exited" from="AttackArea" to="." method="_on_attack_area_body_exited"]

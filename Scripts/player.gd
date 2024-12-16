@@ -12,6 +12,8 @@ var currentVelocity=Vector2.ZERO
 @onready var camera:Camera2D=game.get_node("Camera")
 @onready var baseScale=scale
 
+var team: bool = false
+
 func play(sound,where=Vector2(0,0)):
 	game.play(sound,where)
 
