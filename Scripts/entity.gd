@@ -128,11 +128,14 @@ func hurt(amount:float,attacker:Entity=null)->float:
 	return 0
 		
 func attack():
-	if type==ENTITY_TYPE.PLAYER or currentTarget:
-		if currentTarget:
-			print("BONK", currentTarget.name)
-		else:
-			print("BONK")
+	if type==ENTITY_TYPE.PLAYER:
+		print("BONK PLAYER")
+	if currentTarget:
+		print("BONK",currentTarget.name)
+		currentTarget.hurt(damage,self)
+	else:
+		pass
+		# TODO attack the target which where there
 		# Apply damage logic here
 
 func modelApply(whatModel:Dictionary)->void:
@@ -190,6 +193,11 @@ func _process(delta: float) -> void:
 		if type==ENTITY_TYPE.PLAYER and Input.get_action_strength("attack")>0:
 			attackPhase=ENTITY_ATTACK_PHASE.LAUNCHED
 			play_attack_animation()
+		else:
+			if currentTarget!=null and not currentTarget.dead:
+				attackPhase=ENTITY_ATTACK_PHASE.LAUNCHED
+				play_attack_animation()
+				
 	else:
 		attackTimer+=delta*attackSpeed
 	if attackPhase==ENTITY_ATTACK_PHASE.LAUNCHED:
@@ -267,7 +275,7 @@ func play_death_animation():
 # Detection area signals
 func _on_detection_area_body_entered(body):
 	print("body entered",body.name)
-	if body.team != team:
+	if not body.dead and body.team != team:
 		detectedEnemies.append(body)
 		print("Enemy detected:", body.name)
 		if not currentTarget:
@@ -278,7 +286,7 @@ func _on_detection_area_body_exited(body):
 		detectedEnemies.erase(body)
 		print("Enemy left:", body.name)
 		if currentTarget == body:
-			currentTarget = detectedEnemies[0] if detectedEnemies.size() > 0 else null
+			currentTarget=Game.groupGetClosest(self,detectedEnemies)
 
 # Attack area signals
 func _on_attack_area_body_entered(body):

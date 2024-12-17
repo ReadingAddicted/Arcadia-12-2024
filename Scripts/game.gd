@@ -1,4 +1,5 @@
 extends Node2D
+class_name Game
 
 @onready var audioManager=$AudioManager#preload("res://Scenes/AudioManager.tscn")
 @onready var rng=RandomNumberGenerator.new()
@@ -95,3 +96,31 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if Input.get_action_raw_strength("spawn")>0:
 		spawn("minion")
+
+static func groupPurge(ug:Array[Entity])->void:
+	for e in ug:
+		if e==null or not is_instance_valid(e) or e.dead:
+			ug.erase(e)
+
+static func groupGetClosest(what:Entity,ug:Array[Entity])->Entity:
+	if ug==null:
+		return null
+	
+	Game.groupPurge(ug)
+	if ug.size()<=0:
+		return null
+	
+	if ug.size()==1:
+		return ug[0]
+	
+	if ug.size()==2:
+		return ug[0] if what.position.distance_squared_to(ug[0].position)<=what.position.distance_squared_to(ug[1].position) else ug[1]
+	
+	var closest:Entity=ug[0]
+	var distance:float=what.position.distance_squared_to(closest.position)
+	for e in ug:
+		var d=what.position.distance_squared_to(e.position)
+		if d<distance:
+			d=distance
+			closest=e
+	return closest
