@@ -40,6 +40,8 @@ var model={
 		"type":Entity.ENTITY_TYPE.BUILDING,
 		"maxLife":1500,
 		"canAttack":false,
+		"spawns":"minion",
+		"spawnMax":5
 	}
 	# etc etc
 }

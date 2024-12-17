@@ -17,7 +17,7 @@ var currentVelocity=Vector2.ZERO
 @onready var baseScale=scale
 @onready var sprite=$Sprite
 
-var team: bool = false
+var team:bool=false
 
 func play(sound,where=Vector2(0,0)):
 	game.play(sound,where)
@@ -66,6 +66,22 @@ var inRangeEnemies = []
 var canAttack = false
 var creator: Node2D = null
 
+@export var spawnMax:int
+var spawnCurrent:int
+var spawnedBatch:Array[Entity]
+var spawnModel:String
+
+func _on_timer_timeout() -> void:
+	if(spawnCurrent < spawnMax):
+		spawnCurrent+=1
+		pass
+		# TODO
+		#var child = minion.instantiate()
+		#child.team=team
+		#child.creator= self
+		#child.position= $SpawningPoint.global_position
+		#get_parent().add_child(child)
+
 func attack():
 	if type==ENTITY_TYPE.PLAYER or currentTarget:
 		if currentTarget:
@@ -87,6 +103,9 @@ func modelApply(whatModel)->void:
 	#attackArea.monitoring=		canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING)
 	if type!=ENTITY_TYPE.BUILDING:
 		movementSpeed=whatModel.movementSpeed
+		spawnModel=whatModel.spawnModel
+		if spawnModel!="":
+			spawnMax=whatModel.spawnMax
 	if canAttack:
 		damagePoint=whatModel.damagePoint
 		recovery=whatModel.recovery
