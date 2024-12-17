@@ -9,6 +9,7 @@ var player
 var model={
 	"player":{
 		"type":Entity.ENTITY_TYPE.PLAYER, # DON'T FORGET THE TYPE
+		"attackType":Entity.ENTITY_ATTACK_TYPE.MELEE,
 		"canAttack":true,
 		"maxLife":200,
 		"lifeRegen":1,
@@ -19,6 +20,8 @@ var model={
 		"attackCooldown":2,
 		"attackRange":90,
 		"collisionSize":32,
+		"detectionSize":1,
+		"attackAreaSize":0.3,
 		"animationIdle":"BakerIdle",
 		"animationMove":"BakerMove",
 		"animationAttack":"BakerAttack",
@@ -26,6 +29,7 @@ var model={
 	},
 	"minion":{
 		"type":Entity.ENTITY_TYPE.MINION,
+		"attackType":Entity.ENTITY_ATTACK_TYPE.MELEE,
 		"canAttack":true,
 		"maxLife":20,
 		"movementSpeed":50,
@@ -35,13 +39,16 @@ var model={
 		"attackCooldown":2,
 		"attackRange":50,
 		"collisionSize":16,
-		"animationIdle":"MinionIdle",
-		"animationMove":"MinionMove",
-		"animationAttack":"MinionAttack",
-		"animationDeath":"MinionDeath"
+		"detectionSize":1,
+		"attackAreaSize":0.3,
+		"animationIdle":"Minion",
+		"animationMove":"Minion",
+		"animationAttack":"Minion",
+		"animationDeath":"Minion"
 	},
 	"minionHeavy":{
 		"type":Entity.ENTITY_TYPE.MINION,
+		"attackType":Entity.ENTITY_ATTACK_TYPE.MELEE,
 		"canAttack":true,
 		"maxLife":20,
 		"movementSpeed":50,
@@ -50,16 +57,60 @@ var model={
 		"damage":20,
 		"attackCooldown":3,
 		"attackRange":90,
-		"collisionSize":16
+		"collisionSize":16,
+		"detectionSize":1,
+		"attackAreaSize":0.3
 	},
 	"bakery":{
 		"type":Entity.ENTITY_TYPE.BUILDING,
+		"attackType":Entity.ENTITY_ATTACK_TYPE.NONE,
 		"maxLife":1500,
 		"canAttack":false,
 		"spawnModel":"minion",
 		"spawnMax":5,
 		"factoryTime":20,
-		"collisionSize":144
+		"collisionSize":144,
+		"animationIdle":"Bakery",
+		"animationMove":"Bakery",
+		"animationAttack":"Bakery",
+		"animationDeath":"Bakery"
+	},
+	"tower":{
+		"type":Entity.ENTITY_TYPE.BUILDING,
+		"attackType":Entity.ENTITY_ATTACK_TYPE.RANGED,
+		"canAttack":true,
+		"maxLife":2000,
+		"spawnModel":"",
+		"bulletModel":"fireball",
+		"damagePoint":0.5,
+		"recovery":0.5,
+		"damage":10,
+		"attackCooldown":2,
+		"collisionSize":144,
+		"detectionSize":1.1,
+		"attackAreaSize":1,
+		"animationIdle":"Tower",
+		"animationMove":"Tower",
+		"animationAttack":"Tower",
+		"animationDeath":"Tower"
+	},
+	"fireball":{
+		"type":Entity.ENTITY_TYPE.PROJECTILE,
+		"attackType":Entity.ENTITY_ATTACK_TYPE.PROJECTILE,
+		"canAttack":true,
+		"maxLife":2000,
+		"damagePoint":0,
+		"recovery":0,
+		"damage":10,
+		"attackCooldown":0,
+		"movementSpeed":250,
+		"collisionSize":1,
+		"detectionSize":2,
+		"attackAreaSize":1,
+		"animationIdle":"Fireball",
+		"animationMove":"Fireball",
+		"animationAttack":"Fireball",
+		"animationDeath":"Fireball"
 	}
 	# etc etc
 }
@@ -93,7 +144,10 @@ func spawn(whatModel:String,where:Vector2=Vector2.ZERO)->Entity:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	spawn("player",Vector2(50,50))
+	var player = spawn("player",Vector2(-50,-50))
+	spawn("tower",Vector2(200,200))
+	spawn("bakery",Vector2(100,100))
+	player.team = true
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
