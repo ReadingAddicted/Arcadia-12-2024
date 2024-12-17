@@ -10,6 +10,7 @@ var model={
 		"type":Entity.ENTITY_TYPE.PLAYER, # DON'T FORGET THE TYPE
 		"canAttack":true,
 		"maxLife":200,
+		"lifeRegen":1,
 		"movementSpeed":200,
 		"damagePoint":0.5,
 		"recovery":0.5,

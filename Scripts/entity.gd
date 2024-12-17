@@ -26,17 +26,13 @@ func play(sound,where=Vector2(0,0)):
 func playPool(soundA:Array[AudioStream],where=Vector2(0,0)):
 	game.playPool(soundA,where)
 
-const ENTITY_DAMAGE_POINT_BASE=0.5
-var damagePoint:float=ENTITY_DAMAGE_POINT_BASE # Time needed between the attack order and the attack landing
+var damagePoint:float=0 # Time needed between the attack order and the attack landing, in seconds
 
-const ENTITY_RECOVERY_BASE=0.5
-var recovery:float=ENTITY_RECOVERY_BASE # Idle time between the attack landing and being able to use another action
+var recovery:float=0 # Idle time between the attack landing and being able to use another action, in seconds
 
-const ENTITY_DAMAGE_BASE=10
-var damage:float=ENTITY_DAMAGE_BASE # Actual damage
+var damage:float # Actual damage
 
-const ENTITY_ATTACK_COOLDOWN_BASE=2
-var attackCooldown=ENTITY_ATTACK_COOLDOWN_BASE
+var attackCooldown # In seconds
 
 var attackSpeed:float=1 # Multiplicator of attack cooldown, damage point and recovery
 
@@ -128,10 +124,12 @@ func attack():
 			print("BONK")
 		# Apply damage logic here
 
-func modelApply(whatModel)->void:
+func modelApply(whatModel:Dictionary)->void:
 	type=whatModel.type
 	
 	canAttack=whatModel.canAttack
+	if whatModel.get("lifeRegen")!=null:
+		lifeRegen=whatModel.lifeRegen
 	set_deferred("detectionArea.monitorable",canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING))
 	set_deferred("detectionArea.monitoring",canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING))
 	set_deferred("attackArea.monitorable",canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING))
@@ -148,20 +146,15 @@ func modelApply(whatModel)->void:
 	else:
 		movementSpeed=whatModel.movementSpeed
 	if canAttack:
-		damagePoint=whatModel.damagePoint
-		recovery=whatModel.recovery
+		if whatModel.get("damagePoint")!=null:
+			damagePoint=whatModel.damagePoint
+		if whatModel.get("recovery")!=null:
+			recovery=whatModel.recovery
 		damage=whatModel.damage
 		attackCooldown=whatModel.attackCooldown
 	set_deferred("hitBox.scale",Vector2(whatModel.collisionSize,whatModel.collisionSize))
-	
-func resetToDefault():
-	damagePoint=ENTITY_DAMAGE_POINT_BASE
-	recovery=ENTITY_RECOVERY_BASE
-	damage=ENTITY_DAMAGE_BASE
-	attackCooldown=ENTITY_ATTACK_COOLDOWN_BASE
 
 func _ready():
-	resetToDefault()
 	print("ready")
 
 func _process(delta: float) -> void:
@@ -170,6 +163,9 @@ func _process(delta: float) -> void:
 		attackPhase=ENTITY_ATTACK_PHASE.NONE
 		factoryTime=0
 		return
+	life+=lifeRegen*delta
+	if life>maxLife:
+		life=maxLife
 	if canAttack and attackPhase==ENTITY_ATTACK_PHASE.NONE:
 		scale=lerp(scale,baseScale,delta*10)
 		if type==ENTITY_TYPE.PLAYER and Input.get_action_strength("attack")>0:
