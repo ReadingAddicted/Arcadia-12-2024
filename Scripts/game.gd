@@ -14,7 +14,8 @@ var model={
 		"damagePoint":0.5,
 		"recovery":0.5,
 		"damage":10,
-		"attackCooldown":2
+		"attackCooldown":2,
+		"collisionSize":32
 	},
 	"minion":{
 		"type":Entity.ENTITY_TYPE.MINION,
@@ -24,7 +25,8 @@ var model={
 		"damagePoint":0.5,
 		"recovery":0.5,
 		"damage":10,
-		"attackCooldown":2
+		"attackCooldown":2,
+		"collisionSize":16
 	},
 	"minionHeavy":{
 		"type":Entity.ENTITY_TYPE.MINION,
@@ -34,14 +36,16 @@ var model={
 		"damagePoint":0.75,
 		"recovery":0.75,
 		"damage":20,
-		"attackCooldown":3
+		"attackCooldown":3,
+		"collisionSize":16
 	},
 	"bakery":{
 		"type":Entity.ENTITY_TYPE.BUILDING,
 		"maxLife":1500,
 		"canAttack":false,
-		"spawns":"minion",
-		"spawnMax":5
+		"spawnModel":"minion",
+		"spawnMax":5,
+		"collisionSize":144
 	}
 	# etc etc
 }

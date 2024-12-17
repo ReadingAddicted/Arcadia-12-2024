@@ -61,6 +61,8 @@ var currentTarget:Node2D = null
 # Detection and attack areas
 @onready var detectionArea:Area2D = $DetectionArea2D
 @onready var attackArea:Area2D = $AttackArea2D
+@onready var hitBox:CollisionShape2D=$Hitbox
+
 var detectedEnemies = []
 var inRangeEnemies = []
 var canAttack = false
@@ -92,7 +94,7 @@ func attack():
 
 func modelApply(whatModel)->void:
 	type=whatModel.type
-		
+	
 	canAttack=whatModel.canAttack
 	set_deferred("detectionArea.monitorable",canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING))
 	set_deferred("detectionArea.monitoring",canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING))
@@ -101,16 +103,19 @@ func modelApply(whatModel)->void:
 	#detectionArea.monitoring=	canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING)
 	#attackArea.monitorable=		canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING)
 	#attackArea.monitoring=		canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING)
-	if type!=ENTITY_TYPE.BUILDING:
-		movementSpeed=whatModel.movementSpeed
+	if type==ENTITY_TYPE.BUILDING:
 		spawnModel=whatModel.spawnModel
 		if spawnModel!="":
 			spawnMax=whatModel.spawnMax
+		hitBox.shape=RectangleShape2D.new()
+	else:
+		movementSpeed=whatModel.movementSpeed
 	if canAttack:
 		damagePoint=whatModel.damagePoint
 		recovery=whatModel.recovery
 		damage=whatModel.damage
 		attackCooldown=whatModel.attackCooldown
+	set_deferred("hitBox.scale",Vector2(whatModel.collisionSize,whatModel.collisionSize))
 	
 func resetToDefault():
 	damagePoint=ENTITY_DAMAGE_POINT_BASE

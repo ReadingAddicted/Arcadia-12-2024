@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cdunb426wrysp" path="res://Sprites/New Piskel.png" id="2_syskm"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ikuex"]
+radius = 1.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fx7q5"]
 atlas = ExtResource("2_syskm")
