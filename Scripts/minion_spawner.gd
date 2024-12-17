@@ -5,7 +5,6 @@ extends StaticBody2D
 @export var max_minions: int = 5
 var amount_minions: int = 0
 
-
 func _on_timer_timeout() -> void:
 	if(amount_minions < max_minions):
 		var child = minion.instantiate()

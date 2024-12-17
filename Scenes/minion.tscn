@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://f1br0b84x7lg"]
+[gd_scene load_steps=5 format=3 uid="uid://cg63vti3l415l"]
 
 [ext_resource type="Script" path="res://Scripts/minion.gd" id="1_f10wd"]
 [ext_resource type="Texture2D" uid="uid://dt183wafk4e7p" path="res://Sprites/minion.png" id="2_gwigt"]

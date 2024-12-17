@@ -1,4 +1,5 @@
 extends CharacterBody2D
+class_name Minion
 
 const SPEED = 100
 @export var health = 50.0
@@ -51,6 +52,12 @@ func attack():
 		print("BONK", currentTarget.name)
 		# Apply damage logic here
 
+func modelApply(whatModel)->void:
+	damagePoint=whatModel.damagePoint
+	recovery=whatModel.recovery
+	damage=whatModel.damage
+	attackCooldown=whatModel.attackCooldown
+	
 func _ready():
 	resetToDefault()
 	print("minion ready")
@@ -58,7 +65,6 @@ func _ready():
 func _process(delta: float) -> void:
 	if canAttack && attackPhase == MINION_ATTACK_PHASE.NONE:
 		attackPhase = MINION_ATTACK_PHASE.LAUNCHED
-	
 	# Attack phase logic
 	if attackPhase == MINION_ATTACK_PHASE.NONE:
 		scale = lerp(scale, baseScale, delta * 10)
