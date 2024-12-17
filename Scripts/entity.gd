@@ -6,9 +6,10 @@ class_name Entity
 						 preload("res://Sounds/wingedmacewoosh2.wav"),
 						 preload("res://Sounds/wingedmacewoosh3.wav")]
 
-var movementSpeed
-var life
-var maxLife
+var movementSpeed:float
+var life:float
+var maxLife:float
+var lifeRegen:float
 
 var targetVelocity=Vector2.ZERO
 var currentVelocity=Vector2.ZERO
@@ -66,24 +67,59 @@ var currentTarget:Node2D = null
 var detectedEnemies = []
 var inRangeEnemies = []
 var canAttack = false
-var creator: Node2D = null
+var creator:Entity = null
 
 @export var spawnMax:int
 var spawnCurrent:int
 var spawnedBatch:Array[Entity]
 var spawnModel:String
+var dead:bool=false
 
-func _on_timer_timeout() -> void:
-	if(spawnCurrent < spawnMax):
-		spawnCurrent+=1
-		pass
-		# TODO
-		#var child = minion.instantiate()
-		#child.team=team
-		#child.creator= self
-		#child.position= $SpawningPoint.global_position
-		#get_parent().add_child(child)
+func creation(what:Entity):
+	what.team=team
+	what.creator=self
+	if team:
+		what.global_position-=Vector2(hitBox.scale.x,0)
+	else:
+		what.global_position+=Vector2(hitBox.scale.x,0)
+	
+var factoryCurrent:float=0
+var factoryTime:float # In seconds
 
+func factoryLoop(delta:float):
+	if spawnCurrent<spawnMax:
+		factoryCurrent+=delta
+		if factoryCurrent>=factoryTime:
+			factoryCurrent-=factoryTime
+			spawnCurrent+=1
+			var e=game.spawn(spawnModel)
+			game.add_child(e)
+			call_deferred("creation",e)
+	else:
+		factoryCurrent=0
+
+# Called once
+func death(killer:Entity=null):
+	if dead:
+		return
+	dead=true
+	if spawnMax>0:
+		for e in spawnedBatch:
+			e.creator=null
+	if creator!=null:
+		creator.spawnedBatch.erase(self)
+
+# Called to receive damage
+# Returns the damage passing through
+func hurt(amount:float,attacker:Entity=null)->float:
+	if not dead:
+		life-=amount
+		if life<=0:
+			death(attacker)
+		if dead:
+			return amount+life
+	return 0
+		
 func attack():
 	if type==ENTITY_TYPE.PLAYER or currentTarget:
 		if currentTarget:
@@ -107,6 +143,7 @@ func modelApply(whatModel)->void:
 		spawnModel=whatModel.spawnModel
 		if spawnModel!="":
 			spawnMax=whatModel.spawnMax
+			factoryTime=whatModel.factoryTime
 		hitBox.shape=RectangleShape2D.new()
 	else:
 		movementSpeed=whatModel.movementSpeed
@@ -129,6 +166,10 @@ func _ready():
 
 func _process(delta: float) -> void:
 	# Damage rythm
+	if dead:
+		attackPhase=ENTITY_ATTACK_PHASE.NONE
+		factoryTime=0
+		return
 	if canAttack and attackPhase==ENTITY_ATTACK_PHASE.NONE:
 		scale=lerp(scale,baseScale,delta*10)
 		if type==ENTITY_TYPE.PLAYER and Input.get_action_strength("attack")>0:
@@ -147,6 +188,8 @@ func _process(delta: float) -> void:
 		if attackTimer>recovery:
 			attackTimer=0
 			attackPhase=ENTITY_ATTACK_PHASE.NONE
+	if factoryTime>0:
+		factoryLoop(delta)
 
 func _physics_process(delta: float) -> void:
 	if type==ENTITY_TYPE.BUILDING:

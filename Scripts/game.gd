@@ -45,6 +45,7 @@ var model={
 		"canAttack":false,
 		"spawnModel":"minion",
 		"spawnMax":5,
+		"factoryTime":20,
 		"collisionSize":144
 	}
 	# etc etc
@@ -71,10 +72,11 @@ func modelApply(what:Entity,whatModel:String,where:Vector2=Vector2.ZERO)->void:
 	add_child(what)
 	what.global_position=where
 
-func spawn(whatModel:String,where:Vector2=Vector2.ZERO)->void:
+func spawn(whatModel:String,where:Vector2=Vector2.ZERO)->Entity:
 	var m=entityModel.instantiate()
 	call_deferred("modelApply",m,whatModel,where)
 	print("spawn ",m)
+	return m
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

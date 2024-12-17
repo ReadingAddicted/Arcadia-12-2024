@@ -64,7 +64,6 @@ one_way_collision_margin = 32.0
 position = Vector2(2, -15)
 sprite_frames = SubResource("SpriteFrames_uhsie")
 animation = &"idle"
-frame_progress = 0.864496
 
 [node name="DetectionArea" type="Area2D" parent="."]
 collision_layer = 2
