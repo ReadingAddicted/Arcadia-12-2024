@@ -189,6 +189,7 @@ func _process(delta: float) -> void:
 		scale=lerp(scale,baseScale,delta*10)
 		if type==ENTITY_TYPE.PLAYER and Input.get_action_strength("attack")>0:
 			attackPhase=ENTITY_ATTACK_PHASE.LAUNCHED
+			play_attack_animation()
 	else:
 		attackTimer+=delta*attackSpeed
 	if attackPhase==ENTITY_ATTACK_PHASE.LAUNCHED:
@@ -240,11 +241,12 @@ func _physics_process(delta: float) -> void:
 		
 	if type==ENTITY_TYPE.PLAYER:
 		camera.global_position=lerp(camera.global_position,global_position,delta*10)
-	if velocity.length_squared() > 100:
-		play_walk_animation(velocity)
-	else:
-		currentVelocity=lerp(currentVelocity,targetVelocity,delta*10)
-		play_idle_animation()
+	if attackPhase==ENTITY_ATTACK_PHASE.NONE:
+		if velocity.length_squared() > 100:
+			play_walk_animation(velocity)
+		else:
+			currentVelocity=lerp(currentVelocity,targetVelocity,delta*10)
+			play_idle_animation()
 
 func play_walk_animation(direction):
 	sprite.play(animation.move)
@@ -256,6 +258,9 @@ func play_walk_animation(direction):
 
 func play_idle_animation():
 	sprite.play(animation.idle)
+
+func play_attack_animation():
+	sprite.play(animation.attack)
 
 func play_death_animation():
 	sprite.play(animation.death)
@@ -300,3 +305,6 @@ func _on_sprite_animation_finished() -> void:
 	if dead:
 # En gros on dit au jeu qu'on va le depop mais il ne va pas disparaîte extactement tout de suite
 		queue_free()
+	else:
+		if sprite.get_animation()==animation.attack:
+			play_idle_animation()
