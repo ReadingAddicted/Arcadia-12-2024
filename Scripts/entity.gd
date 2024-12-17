@@ -36,6 +36,13 @@ var attackCooldown # In seconds
 
 var attackSpeed:float=1 # Multiplicator of attack cooldown, damage point and recovery
 
+var animation={
+	"idle":"EmptyAnimation",
+	"move":"EmptyAnimation",
+	"attack":"EmptyAnimation",
+	"death":"EmptyAnimation"
+}
+
 const ENTITY_ATTACK_PHASE={
 	NONE=0,
 	LAUNCHED=1,
@@ -99,6 +106,10 @@ func death(killer:Entity=null):
 	if dead:
 		return
 	dead=true
+	# Disable collision
+	collision_layer=0
+	collision_mask=0
+	play_death_animation()
 	if spawnMax>0:
 		for e in spawnedBatch:
 			e.creator=null
@@ -127,6 +138,14 @@ func attack():
 func modelApply(whatModel:Dictionary)->void:
 	type=whatModel.type
 	
+	if whatModel.get("animationIdle")!=null:
+		animation.idle=whatModel.animationIdle
+	if whatModel.get("animationMove")!=null:
+		animation.move=whatModel.animationMove
+	if whatModel.get("animationAttack")!=null:
+		animation.attack=whatModel.animationAttack
+	if whatModel.get("animationDeath")!=null:
+		animation.death=whatModel.animationDeath
 	canAttack=whatModel.canAttack
 	if whatModel.get("lifeRegen")!=null:
 		lifeRegen=whatModel.lifeRegen
@@ -228,7 +247,7 @@ func _physics_process(delta: float) -> void:
 		play_idle_animation()
 
 func play_walk_animation(direction):
-	sprite.play("move")
+	sprite.play(animation.move)
 	if attackPhase==ENTITY_ATTACK_PHASE.NONE:
 		if direction.x < 0:
 			sprite.flip_h = true
@@ -236,8 +255,10 @@ func play_walk_animation(direction):
 			sprite.flip_h = false
 
 func play_idle_animation():
-	sprite.play("idle")
+	sprite.play(animation.idle)
 
+func play_death_animation():
+	sprite.play(animation.death)
 # Detection area signals
 func _on_detection_area_body_entered(body):
 	print("body entered",body.name)
@@ -274,3 +295,8 @@ func _on_attack_area_body_exited(body):
 			currentTarget = null
 			canAttack = false
 		print("Target left attack range:", body.name)
+
+func _on_sprite_animation_finished() -> void:
+	if dead:
+# En gros on dit au jeu qu'on va le depop mais il ne va pas disparaîte extactement tout de suite
+		queue_free()

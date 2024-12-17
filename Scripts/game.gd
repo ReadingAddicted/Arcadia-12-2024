@@ -16,7 +16,11 @@ var model={
 		"recovery":0.5,
 		"damage":10,
 		"attackCooldown":2,
-		"collisionSize":32
+		"collisionSize":32,
+		"animationIdle":"BakerIdle",
+		"animationMove":"BakerMove",
+		"animationAttack":"BakerAttack",
+		"animationDeath":"BakerDeath"
 	},
 	"minion":{
 		"type":Entity.ENTITY_TYPE.MINION,
@@ -27,7 +31,11 @@ var model={
 		"recovery":0.5,
 		"damage":10,
 		"attackCooldown":2,
-		"collisionSize":16
+		"collisionSize":16,
+		"animationIdle":"MinionIdle",
+		"animationMove":"MinionMove",
+		"animationAttack":"MinionAttack",
+		"animationDeath":"MinionDeath"
 	},
 	"minionHeavy":{
 		"type":Entity.ENTITY_TYPE.MINION,
@@ -85,4 +93,5 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	if Input.get_action_raw_strength("spawn")>0:
+		spawn("minion")
