@@ -27,14 +27,11 @@ func playPool(soundA:Array[AudioStream],where=Vector2(0,0)):
 	game.playPool(soundA,where)
 
 var damagePoint:float=0 # Time needed between the attack order and the attack landing, in seconds
-
 var recovery:float=0 # Idle time between the attack landing and being able to use another action, in seconds
-
 var damage:float # Actual damage
-
 var attackCooldown # In seconds
-
 var attackSpeed:float=1 # Multiplicator of attack cooldown, damage point and recovery
+var attackRange:float=0 # in pixels
 
 var animation={
 	"idle":"EmptyAnimation",
@@ -71,6 +68,12 @@ var detectedEnemies = []
 var inRangeEnemies = []
 var canAttack = false
 var creator:Entity = null
+
+func isAtRangeOfTarget()->bool:
+	# Broke into two lines for readibilty
+	if currentTarget!=null and is_instance_valid(currentTarget) and not currentTarget.dead:
+		return attackRange<=0 or position.distance_squared_to(currentTarget.position)<=attackRange*attackRange
+	return false
 
 @export var spawnMax:int
 var spawnCurrent:int
@@ -130,7 +133,7 @@ func hurt(amount:float,attacker:Entity=null)->float:
 func attack():
 	if type==ENTITY_TYPE.PLAYER:
 		print("BONK PLAYER")
-	if currentTarget:
+	if currentTarget!=null and is_instance_valid(currentTarget) and not currentTarget.dead and isAtRangeOfTarget():
 		print("BONK",currentTarget.name)
 		currentTarget.hurt(damage,self)
 	else:
@@ -152,6 +155,8 @@ func modelApply(whatModel:Dictionary)->void:
 	canAttack=whatModel.canAttack
 	if whatModel.get("lifeRegen")!=null:
 		lifeRegen=whatModel.lifeRegen
+	if whatModel.get("attackRange")!=null:
+		attackRange=whatModel.attackRange
 	set_deferred("detectionArea.monitorable",canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING))
 	set_deferred("detectionArea.monitoring",canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING))
 	set_deferred("attackArea.monitorable",canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING))
@@ -180,11 +185,11 @@ func _ready():
 	print("ready")
 
 func _process(delta: float) -> void:
-	# Damage rythm
 	if dead:
 		attackPhase=ENTITY_ATTACK_PHASE.NONE
 		factoryTime=0
 		return
+	
 	life+=lifeRegen*delta
 	if life>maxLife:
 		life=maxLife
@@ -197,7 +202,6 @@ func _process(delta: float) -> void:
 			if currentTarget!=null and not currentTarget.dead:
 				attackPhase=ENTITY_ATTACK_PHASE.LAUNCHED
 				play_attack_animation()
-				
 	else:
 		attackTimer+=delta*attackSpeed
 	if attackPhase==ENTITY_ATTACK_PHASE.LAUNCHED:
@@ -205,7 +209,7 @@ func _process(delta: float) -> void:
 		if attackTimer>damagePoint:
 			attackTimer-=damagePoint
 			attackPhase=ENTITY_ATTACK_PHASE.RECOVERY
-			attack() # TODO
+			attack()
 			playPool(soundSwish,position)
 	if attackPhase==ENTITY_ATTACK_PHASE.RECOVERY:
 		scale=lerp(scale,baseScale*0.8,delta*5)
@@ -238,9 +242,15 @@ func _physics_process(delta: float) -> void:
 		if attackPhase == ENTITY_ATTACK_PHASE.NONE:
 			if currentTarget:
 				# Move toward the target
+				# TODO stop when target is at range
+				# TODO change target if not reached for a while
 				targetVelocity = (currentTarget.global_position - global_position).normalized()
 			else:
-				targetVelocity = Vector2.ZERO
+				# TODO when close to the opposite border, go down instead
+				if team:
+					targetVelocity=Vector2(-1,0)
+				else:
+					targetVelocity=Vector2(1,0)
 	
 	currentVelocity=lerp(currentVelocity,targetVelocity,delta*10)
 	velocity=currentVelocity*movementSpeed

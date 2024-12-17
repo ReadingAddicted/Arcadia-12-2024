@@ -17,6 +17,7 @@ var model={
 		"recovery":0.5,
 		"damage":10,
 		"attackCooldown":2,
+		"attackRange":90,
 		"collisionSize":32,
 		"animationIdle":"BakerIdle",
 		"animationMove":"BakerMove",
@@ -32,6 +33,7 @@ var model={
 		"recovery":0.5,
 		"damage":10,
 		"attackCooldown":2,
+		"attackRange":50,
 		"collisionSize":16,
 		"animationIdle":"MinionIdle",
 		"animationMove":"MinionMove",
@@ -47,6 +49,7 @@ var model={
 		"recovery":0.75,
 		"damage":20,
 		"attackCooldown":3,
+		"attackRange":90,
 		"collisionSize":16
 	},
 	"bakery":{
