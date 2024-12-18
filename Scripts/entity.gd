@@ -51,13 +51,22 @@ const ENTITY_TYPE={
 	PLAYER=1, # No AI, controlled by keyboard, one at a time !
 	MINION=2, # Has AI, moves
 	BUILDING=3, # Has AI
+	PROJECTILE=4, # Has set movement and lifetime
+}
+
+const ENTITY_ATTACK_TYPE={
+	NONE=0, # No AI
+	MELEE=1, # Direct damage
+	RANGED=2, # Create Temporary projectile entity
+	PROJECTILE=3, # Has set movement and lifetime
 }
 
 var type=ENTITY_TYPE.NONE
+var attackType=ENTITY_ATTACK_TYPE.NONE
 
 var attackPhase=ENTITY_ATTACK_PHASE.NONE
 var attackTimer:float=0 # The actual incrementing timer
-var currentTarget:Node2D = null
+var currentTarget:Entity = null
 
 # Detection and attack areas
 @onready var detectionArea:Area2D = $DetectionArea2D
@@ -82,14 +91,22 @@ var spawnCurrent:int
 var spawnedBatch:Array[Entity]
 var spawnModel:String
 var dead:bool=false
+var bulletModel=null
 
 func creation(what:Entity):
 	what.team=team
 	what.creator=self
+	what.global_position = position
 	if team:
 		what.global_position-=Vector2(hitBox.scale.x,0)
 	else:
 		what.global_position+=Vector2(hitBox.scale.x,0)
+	if what.type == ENTITY_TYPE.PROJECTILE:
+		what.targetVelocity = (currentTarget.global_position - what.global_position).normalized()
+		print("projectile created")
+	else:
+		print("minion created")
+		
 	
 var factoryCurrent:float=0
 var factoryTime:float # In seconds
@@ -133,14 +150,24 @@ func hurt(amount:float,attacker:Entity=null)->float:
 	return 0
 		
 func attack():
-	if type==ENTITY_TYPE.PLAYER:
-		print("BONK PLAYER")
-	if currentTarget!=null and is_instance_valid(currentTarget) and not currentTarget.dead and isAtRangeOfTarget():
-		print("BONK",currentTarget.name)
-		currentTarget.hurt(damage,self)
-	else:
-		pass
-		# TODO attack the target which where there
+	if type==ENTITY_TYPE.PLAYER or currentTarget:
+		if currentTarget:
+			if attackType==ENTITY_ATTACK_TYPE.MELEE:
+				if inRangeEnemies.has(currentTarget):
+					var damageAmount = currentTarget.hurt(damage, self)
+					print("BONKED ", currentTarget.name," for ",damageAmount," health")
+				else:
+					print("Attack dodged")
+			if attackType==ENTITY_ATTACK_TYPE.RANGED:
+				var e=game.spawn("fireball")
+				game.add_child(e)
+				call_deferred("creation",e)
+			if attackType==ENTITY_ATTACK_TYPE.PROJECTILE:
+				var damageAmount = currentTarget.hurt(damage, creator)
+				print("BONKED ", currentTarget.name," for ",damageAmount," health")
+				self.queue_free()
+		else:
+			print("BONK")
 		# Apply damage logic here
 
 func modelApply(whatModel:Dictionary)->void:
@@ -175,10 +202,15 @@ func modelApply(whatModel:Dictionary)->void:
 		if spawnModel!="":
 			spawnMax=whatModel.spawnMax
 			factoryTime=whatModel.factoryTime
-		hitBox.shape=RectangleShape2D.new()
+		elif whatModel.bulletModel != "":
+			bulletModel = whatModel.bulletModel
+		$Hitbox.shape=RectangleShape2D.new()
 	else:
 		movementSpeed=whatModel.movementSpeed
 	if canAttack:
+		attackType=whatModel.attackType
+		set_deferred("DetectionArea.DetectionCircle.scale", Vector2(whatModel.detectionSize, whatModel.detectionSize))
+		set_deferred("AttackArea.AttackAreaCircle.scale", Vector2(whatModel.attackAreaSize, whatModel.attackAreaSize))
 		if whatModel.get("damagePoint")!=null:
 			damagePoint=whatModel.damagePoint
 		if whatModel.get("recovery")!=null:
@@ -193,6 +225,7 @@ func _ready():
 	print("ready")
 
 func _process(delta: float) -> void:
+	# Damage rythm
 	if dead:
 		attackPhase=ENTITY_ATTACK_PHASE.NONE
 		factoryTime=0
@@ -203,7 +236,7 @@ func _process(delta: float) -> void:
 		life=maxLife
 	if canAttack and attackPhase==ENTITY_ATTACK_PHASE.NONE:
 		scale=lerp(scale,baseScale,delta*10)
-		if type==ENTITY_TYPE.PLAYER and Input.get_action_strength("attack")>0:
+		if (type==ENTITY_TYPE.PLAYER and Input.get_action_strength("attack")>0) or  ((type == ENTITY_TYPE.MINION or (type == ENTITY_TYPE.BUILDING and bulletModel != null)) and inRangeEnemies.size() > 0):
 			attackPhase=ENTITY_ATTACK_PHASE.LAUNCHED
 			play_attack_animation()
 		else:
@@ -229,6 +262,7 @@ func _process(delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	if type==ENTITY_TYPE.BUILDING:
+		play_idle_animation()
 		return
 	
 	if type==ENTITY_TYPE.PLAYER:
@@ -247,6 +281,7 @@ func _physics_process(delta: float) -> void:
 				targetVelocity.x+=0.1
 	
 	if type==ENTITY_TYPE.MINION:
+		play_idle_animation()
 		if attackPhase == ENTITY_ATTACK_PHASE.NONE:
 			if currentTarget:
 				# Move toward the target
@@ -262,6 +297,10 @@ func _physics_process(delta: float) -> void:
 	
 	currentVelocity=lerp(currentVelocity,targetVelocity,delta*10)
 	velocity=currentVelocity*movementSpeed
+	
+	if type==ENTITY_TYPE.PROJECTILE:
+		play_idle_animation()
+		velocity=targetVelocity*movementSpeed
 	
 	move_and_slide()
 		
@@ -313,6 +352,8 @@ func _on_attack_area_body_entered(body):
 		currentTarget = body
 		canAttack = true
 		print("Target in attack range:", body.name)
+		if type == ENTITY_TYPE.PROJECTILE:
+			attack()
 
 func _on_attack_area_body_exited(body):
 	if currentTarget == body:
@@ -321,11 +362,11 @@ func _on_attack_area_body_exited(body):
 			currentTarget = inRangeEnemies[0]
 		elif detectedEnemies.size() > 0:
 			currentTarget = detectedEnemies[0]
-			canAttack = false
 		else:
 			currentTarget = null
-			canAttack = false
 		print("Target left attack range:", body.name)
+	if body.type == ENTITY_TYPE.PROJECTILE && body.creator == self:
+		body.death()
 
 func _on_sprite_animation_finished() -> void:
 	if dead:
