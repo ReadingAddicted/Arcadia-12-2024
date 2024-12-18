@@ -7,7 +7,7 @@
 [node name="Game" type="Node2D"]
 script = ExtResource("1_gasgt")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Background" type="Sprite2D" parent="."]
 texture = ExtResource("1_y02fr")
 
 [node name="Border" type="StaticBody2D" parent="."]

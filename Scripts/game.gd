@@ -13,7 +13,7 @@ var model={
 		"canAttack":true,
 		"maxLife":200,
 		"lifeRegen":1,
-		"movementSpeed":200,
+		"movementSpeed":400,
 		"damagePoint":0.5,
 		"recovery":0.5,
 		"damage":10,
@@ -24,7 +24,7 @@ var model={
 		"animationIdle":"PastryIdle",
 		"detectionSize":1,
 		"attackAreaSize":0.3,
-		"animationMove":"BakerMove",
+		"animationMove":"PastryMove",
 		"animationAttack":"BakerAttack",
 		"animationDeath":"BakerDeath"
 	},
@@ -149,6 +149,7 @@ func _ready() -> void:
 	spawn("tower",Vector2(200,200))
 	spawn("bakery",Vector2(100,100))
 	player.team = true
+	$Background.modulate=Color(2,2,2)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

@@ -1,9 +1,9 @@
-[gd_scene load_steps=16 format=3 uid="uid://dv6kjjc0e63lr"]
+[gd_scene load_steps=18 format=3 uid="uid://dv6kjjc0e63lr"]
 
 [ext_resource type="Script" path="res://Scripts/entity.gd" id="1_5x0ah"]
 [ext_resource type="Texture2D" uid="uid://mvfsa6mqqg17" path="res://Sprites/BakerAttack.png" id="2_hnl87"]
-[ext_resource type="Texture2D" uid="uid://cdunb426wrysp" path="res://Sprites/New Piskel.png" id="2_syskm"]
 [ext_resource type="Texture2D" uid="uid://dlijegfn4pj3u" path="res://Sprites/PastryIdle.png" id="4_0r54s"]
+[ext_resource type="Texture2D" uid="uid://dbsrgs4h61pls" path="res://Sprites/PastryMove.png" id="4_55wld"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ikuex"]
 radius = 1.0
@@ -15,14 +15,6 @@ region = Rect2(0, 0, 256, 256)
 [sub_resource type="AtlasTexture" id="AtlasTexture_3l0j5"]
 atlas = ExtResource("2_hnl87")
 region = Rect2(256, 0, 256, 256)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_35b2f"]
-atlas = ExtResource("2_syskm")
-region = Rect2(0, 32, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6v3rk"]
-atlas = ExtResource("2_syskm")
-region = Rect2(32, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1araq"]
 atlas = ExtResource("4_0r54s")
@@ -40,6 +32,22 @@ region = Rect2(512, 0, 256, 256)
 atlas = ExtResource("4_0r54s")
 region = Rect2(768, 0, 256, 256)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ihal"]
+atlas = ExtResource("4_55wld")
+region = Rect2(0, 0, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ef3ly"]
+atlas = ExtResource("4_55wld")
+region = Rect2(256, 0, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_efmbj"]
+atlas = ExtResource("4_55wld")
+region = Rect2(512, 0, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hf31x"]
+atlas = ExtResource("4_55wld")
+region = Rect2(768, 0, 256, 256)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_uhsie"]
 animations = [{
 "frames": [{
@@ -52,17 +60,6 @@ animations = [{
 "loop": true,
 "name": &"BakerAttack",
 "speed": 2.0
-}, {
-"frames": [{
-"duration": 2.0,
-"texture": SubResource("AtlasTexture_35b2f")
-}, {
-"duration": 2.0,
-"texture": SubResource("AtlasTexture_6v3rk")
-}],
-"loop": true,
-"name": &"BakerMove",
-"speed": 5.0
 }, {
 "frames": [],
 "loop": true,
@@ -85,6 +82,23 @@ animations = [{
 "loop": true,
 "name": &"PastryIdle",
 "speed": 7.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1ihal")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_ef3ly")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_efmbj")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_hf31x")
+}],
+"loop": true,
+"name": &"PastryMove",
+"speed": 8.0
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xftjd"]
@@ -102,8 +116,8 @@ one_way_collision_margin = 32.0
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_uhsie")
-animation = &"PastryIdle"
-frame_progress = 0.458458
+animation = &"PastryMove"
+frame_progress = 0.481654
 
 [node name="DetectionArea" type="Area2D" parent="."]
 visible = false

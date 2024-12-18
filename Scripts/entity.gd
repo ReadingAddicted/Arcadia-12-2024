@@ -267,9 +267,11 @@ func _physics_process(delta: float) -> void:
 	if type==ENTITY_TYPE.BUILDING:
 		play_idle_animation()
 		return
-	
+	var moving=false
 	if type==ENTITY_TYPE.PLAYER:
 		targetVelocity=Input.get_vector("move_left","move_right","move_up","move_down")
+		if not targetVelocity.is_zero_approx():
+			moving=true
 		if attackPhase==ENTITY_ATTACK_PHASE.LAUNCHED:
 			targetVelocity/=3
 			if sprite.flip_h:
@@ -291,12 +293,14 @@ func _physics_process(delta: float) -> void:
 				# TODO stop when target is at range
 				# TODO change target if not reached for a while
 				targetVelocity = (currentTarget.global_position - global_position).normalized()
+				moving=true
 			else:
 				# TODO when close to the opposite border, go down instead
 				if team:
 					targetVelocity=Vector2(-1,0)
 				else:
 					targetVelocity=Vector2(1,0)
+				moving=true
 	
 	currentVelocity=lerp(currentVelocity,targetVelocity,delta*10)
 	velocity=currentVelocity*movementSpeed
@@ -310,7 +314,7 @@ func _physics_process(delta: float) -> void:
 	if type==ENTITY_TYPE.PLAYER:
 		camera.global_position=lerp(camera.global_position,global_position,delta*10)
 	if attackPhase==ENTITY_ATTACK_PHASE.NONE:
-		if velocity.length_squared() > 100:
+		if moving and velocity.length_squared() > 100:
 			play_walk_animation(velocity)
 		else:
 			currentVelocity=lerp(currentVelocity,targetVelocity,delta*10)
