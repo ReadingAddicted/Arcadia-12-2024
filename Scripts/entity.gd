@@ -75,8 +75,8 @@ var currentTarget:Entity = null
 var hitBoxSize=1
 var spriteShift=Vector2.ZERO
 
-var detectedEnemies = []
-var inRangeEnemies = []
+var detectedEnemies:Array[Entity] = []
+var inRangeEnemies:Array[Entity] = []
 var canAttack = false
 var creator:Entity = null
 
@@ -220,7 +220,10 @@ func modelApply(whatModel:Dictionary)->void:
 	hitBoxSize=whatModel.collisionSize
 
 func _ready():
-	hitBox.shape.radius=hitBoxSize
+	if hitBox.shape is RectangleShape2D:
+		hitBox.shape.size=Vector2(hitBoxSize,hitBoxSize)
+	else:
+		hitBox.shape.radius=hitBoxSize
 	sprite.position=spriteShift
 	print("ready")
 

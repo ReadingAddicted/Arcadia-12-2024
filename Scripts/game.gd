@@ -20,14 +20,10 @@ var model={
 		"attackCooldown":2,
 		"attackRange":90,
 		"collisionSize":32,
-<<<<<<< HEAD
 		"spriteShift":Vector2(0,-16),
 		"animationIdle":"PastryIdle",
-=======
 		"detectionSize":1,
 		"attackAreaSize":0.3,
-		"animationIdle":"BakerIdle",
->>>>>>> 31bc14ab12792e45674364d883670c791914b50e
 		"animationMove":"BakerMove",
 		"animationAttack":"BakerAttack",
 		"animationDeath":"BakerDeath"
