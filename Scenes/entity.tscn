@@ -1,36 +1,36 @@
-[gd_scene load_steps=26 format=3 uid="uid://dv6kjjc0e63lr"]
+[gd_scene load_steps=22 format=3 uid="uid://dv6kjjc0e63lr"]
 
 [ext_resource type="Script" path="res://Scripts/entity.gd" id="1_5x0ah"]
-[ext_resource type="Texture2D" uid="uid://mvfsa6mqqg17" path="res://Sprites/BakerAttack.png" id="2_hnl87"]
+[ext_resource type="Texture2D" uid="uid://dykqlo50ioccn" path="res://Sprites/PastryAttack.png" id="2_5eg03"]
 [ext_resource type="Texture2D" uid="uid://dlijegfn4pj3u" path="res://Sprites/PastryIdle.png" id="4_0r54s"]
 [ext_resource type="Texture2D" uid="uid://dbsrgs4h61pls" path="res://Sprites/PastryMove.png" id="4_55wld"]
-[ext_resource type="Texture2D" uid="uid://v0s2qjguvm1k" path="res://Sprites/minionSpawner.png" id="4_w4d7l"]
-[ext_resource type="Texture2D" uid="uid://dysvr5pj55lei" path="res://Sprites/fireball.png" id="5_lsrid"]
-[ext_resource type="Texture2D" uid="uid://dt183wafk4e7p" path="res://Sprites/minion.png" id="6_ohsq5"]
-[ext_resource type="Texture2D" uid="uid://c8isr1i54h48s" path="res://Sprites/wizard tower.png" id="6_t5dvm"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ikuex"]
 radius = 1.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_4ig4o"]
-atlas = ExtResource("2_hnl87")
+[sub_resource type="AtlasTexture" id="AtlasTexture_0fgc8"]
+atlas = ExtResource("2_5eg03")
 region = Rect2(0, 0, 256, 256)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_3l0j5"]
-atlas = ExtResource("2_hnl87")
+[sub_resource type="AtlasTexture" id="AtlasTexture_4kk1g"]
+atlas = ExtResource("2_5eg03")
 region = Rect2(256, 0, 256, 256)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_nwtsw"]
-atlas = ExtResource("4_w4d7l")
-region = Rect2(0, 0, 64, 64)
+[sub_resource type="AtlasTexture" id="AtlasTexture_hdgq1"]
+atlas = ExtResource("2_5eg03")
+region = Rect2(512, 0, 256, 256)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_g7ifo"]
-atlas = ExtResource("5_lsrid")
-region = Rect2(0, 0, 32, 32)
+[sub_resource type="AtlasTexture" id="AtlasTexture_yms7b"]
+atlas = ExtResource("2_5eg03")
+region = Rect2(768, 0, 256, 256)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_xvofn"]
-atlas = ExtResource("6_ohsq5")
-region = Rect2(0, 0, 32, 32)
+[sub_resource type="AtlasTexture" id="AtlasTexture_d1j23"]
+atlas = ExtResource("2_5eg03")
+region = Rect2(1024, 0, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x7uqe"]
+atlas = ExtResource("2_5eg03")
+region = Rect2(1280, 0, 256, 256)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1araq"]
 atlas = ExtResource("4_0r54s")
@@ -64,31 +64,8 @@ region = Rect2(512, 0, 256, 256)
 atlas = ExtResource("4_55wld")
 region = Rect2(768, 0, 256, 256)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_pg5pu"]
-atlas = ExtResource("6_t5dvm")
-region = Rect2(0, 0, 32, 64)
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_uhsie"]
 animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_4ig4o")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_3l0j5")
-}],
-"loop": true,
-"name": &"BakerAttack",
-"speed": 2.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_nwtsw")
-}],
-"loop": true,
-"name": &"Bakery",
-"speed": 5.0
-}, {
 "frames": [],
 "loop": true,
 "name": &"EmptyAnimation",
@@ -96,19 +73,26 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_g7ifo")
-}],
-"loop": true,
-"name": &"Fireball",
-"speed": 5.0
+"texture": SubResource("AtlasTexture_0fgc8")
 }, {
-"frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_xvofn")
+"texture": SubResource("AtlasTexture_4kk1g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hdgq1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yms7b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d1j23")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x7uqe")
 }],
 "loop": true,
-"name": &"Minion",
-"speed": 5.0
+"name": &"PastryAttack",
+"speed": 6.0
 }, {
 "frames": [{
 "duration": 3.0,
@@ -143,14 +127,6 @@ animations = [{
 "loop": true,
 "name": &"PastryMove",
 "speed": 8.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_pg5pu")
-}],
-"loop": true,
-"name": &"Tower",
-"speed": 5.0
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xftjd"]
@@ -168,7 +144,8 @@ one_way_collision_margin = 32.0
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_uhsie")
-animation = &"Minion"
+animation = &"PastryAttack"
+frame_progress = 0.341485
 
 [node name="DetectionArea" type="Area2D" parent="."]
 visible = false

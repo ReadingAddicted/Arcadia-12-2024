@@ -17,7 +17,7 @@ var model={
 		"damagePoint":0.5,
 		"recovery":0.5,
 		"damage":10,
-		"attackCooldown":2,
+		"attackCooldown":1.35,
 		"attackRange":90,
 		"collisionSize":32,
 		"spriteShift":Vector2(0,-16),
@@ -25,7 +25,7 @@ var model={
 		"detectionSize":1,
 		"attackAreaSize":0.3,
 		"animationMove":"PastryMove",
-		"animationAttack":"BakerAttack",
+		"animationAttack":"PastryAttack",
 		"animationDeath":"BakerDeath"
 	},
 	"minion":{

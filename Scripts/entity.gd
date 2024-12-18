@@ -148,7 +148,7 @@ func hurt(amount:float,attacker:Entity=null)->float:
 		if dead:
 			return amount+life
 	return 0
-		
+
 func attack():
 	if type==ENTITY_TYPE.PLAYER or currentTarget:
 		if currentTarget:
@@ -249,14 +249,14 @@ func _process(delta: float) -> void:
 	else:
 		attackTimer+=delta*attackSpeed
 	if attackPhase==ENTITY_ATTACK_PHASE.LAUNCHED:
-		scale=lerp(scale,baseScale*1.2,delta*10)
+		scale=lerp(scale,baseScale*1.1,delta*10)
 		if attackTimer>damagePoint:
 			attackTimer-=damagePoint
 			attackPhase=ENTITY_ATTACK_PHASE.RECOVERY
 			attack()
 			playPool(soundSwish,position)
 	if attackPhase==ENTITY_ATTACK_PHASE.RECOVERY:
-		scale=lerp(scale,baseScale*0.8,delta*5)
+		scale=lerp(scale,baseScale*0.9,delta*5)
 		if attackTimer>recovery:
 			attackTimer=0
 			attackPhase=ENTITY_ATTACK_PHASE.NONE
@@ -275,15 +275,15 @@ func _physics_process(delta: float) -> void:
 		if attackPhase==ENTITY_ATTACK_PHASE.LAUNCHED:
 			targetVelocity/=3
 			if sprite.flip_h:
-				targetVelocity.x+=0.1
+				targetVelocity.x+=pow(damagePoint-attackTimer,2)#0.1
 			else:
-				targetVelocity.x-=0.1
+				targetVelocity.x-=pow(damagePoint-attackTimer,2)#0.1
 		if attackPhase==ENTITY_ATTACK_PHASE.RECOVERY:
 			targetVelocity/=4
 			if sprite.flip_h:
-				targetVelocity.x-=0.1
+				targetVelocity.x-=(recovery-attackTimer)#0.1
 			else:
-				targetVelocity.x+=0.1
+				targetVelocity.x+=(recovery-attackTimer)#0.1
 	
 	if type==ENTITY_TYPE.MINION:
 		play_idle_animation()
