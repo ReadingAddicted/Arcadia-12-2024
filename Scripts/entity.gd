@@ -63,6 +63,8 @@ var currentTarget:Node2D = null
 @onready var detectionArea:Area2D = $DetectionArea2D
 @onready var attackArea:Area2D = $AttackArea2D
 @onready var hitBox:CollisionShape2D=$Hitbox
+var hitBoxSize=1
+var spriteShift=Vector2.ZERO
 
 var detectedEnemies = []
 var inRangeEnemies = []
@@ -161,6 +163,10 @@ func modelApply(whatModel:Dictionary)->void:
 	set_deferred("detectionArea.monitoring",canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING))
 	set_deferred("attackArea.monitorable",canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING))
 	set_deferred("attackArea.monitoring",canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING))
+	if whatModel.get("spriteShift")!=null:
+		spriteShift=whatModel.spriteShift
+		
+		
 	#detectionArea.monitoring=	canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING)
 	#attackArea.monitorable=		canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING)
 	#attackArea.monitoring=		canAttack and (type==ENTITY_TYPE.MINION or type==ENTITY_TYPE.BUILDING)
@@ -179,9 +185,11 @@ func modelApply(whatModel:Dictionary)->void:
 			recovery=whatModel.recovery
 		damage=whatModel.damage
 		attackCooldown=whatModel.attackCooldown
-	set_deferred("hitBox.scale",Vector2(whatModel.collisionSize,whatModel.collisionSize))
+	hitBoxSize=whatModel.collisionSize
 
 func _ready():
+	hitBox.shape.radius=hitBoxSize
+	sprite.position=spriteShift
 	print("ready")
 
 func _process(delta: float) -> void:

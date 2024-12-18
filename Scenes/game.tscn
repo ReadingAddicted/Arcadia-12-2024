@@ -20,7 +20,6 @@ texture = ExtResource("1_y02fr")
 
 [node name="Camera" type="Camera2D" parent="."]
 scale = Vector2(1.5, 1.5)
-zoom = Vector2(2, 2)
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
 drag_left_margin = 0.1
