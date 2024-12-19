@@ -43,8 +43,17 @@ var animation={
 const ENTITY_ATTACK_PHASE={
 	NONE=0,
 	LAUNCHED=1,
-	RECOVERY=2
+	RECOVERY=2,
+	BUILDER=3
 }
+
+const BUILDING_TYPE={
+	BAKERY=0,
+	TOWER=1
+}
+var lastDirection = Vector2(1,0)
+var selectedBuilding = BUILDING_TYPE.BAKERY
+var previewInstance = null
 
 const ENTITY_TYPE={
 	NONE=0, # No AI
@@ -79,6 +88,7 @@ var detectedEnemies:Array[Entity] = []
 var inRangeEnemies:Array[Entity] = []
 var canAttack = false
 var creator:Entity = null
+var hasChangedMode:bool = false
 
 func isAtRangeOfTarget()->bool:
 	# Broke into two lines for readibilty
@@ -148,7 +158,7 @@ func hurt(amount:float,attacker:Entity=null)->float:
 		if dead:
 			return amount+life
 	return 0
-
+		
 func attack():
 	if type==ENTITY_TYPE.PLAYER or currentTarget:
 		if currentTarget:
@@ -234,12 +244,25 @@ func _process(delta: float) -> void:
 		factoryTime=0
 		return
 	
+	if hasChangedMode and Input.get_action_strength("change_mode")<=0:
+		hasChangedMode = false
+	
+	if (type==ENTITY_TYPE.PLAYER and attackPhase==ENTITY_ATTACK_PHASE.NONE and Input.get_action_strength("change_mode")>0 and !hasChangedMode):
+		attackPhase==ENTITY_ATTACK_PHASE.BUILDER
+		var previewScene = load("res://Scenes/building_preview.tscn")
+		previewInstance = previewScene.instantiate()
+		game.add_child(previewInstance)
+		selectedBuilding = BUILDING_TYPE.BAKERY
+		previewInstance.set_hitbox_size(2, 2)  # Bakery is 2x2
+		previewInstance.set_sprite_animation("Bakery")
+		hasChangedMode = true
+	
 	life+=lifeRegen*delta
 	if life>maxLife:
 		life=maxLife
 	if canAttack and attackPhase==ENTITY_ATTACK_PHASE.NONE:
 		scale=lerp(scale,baseScale,delta*10)
-		if (type==ENTITY_TYPE.PLAYER and Input.get_action_strength("attack")>0) or  ((type == ENTITY_TYPE.MINION or (type == ENTITY_TYPE.BUILDING and bulletModel != null)) and inRangeEnemies.size() > 0):
+		if (type==ENTITY_TYPE.PLAYER and Input.get_action_strength("attack")>0) or ((type == ENTITY_TYPE.MINION or (type == ENTITY_TYPE.BUILDING and bulletModel != null)) and inRangeEnemies.size() > 0):
 			attackPhase=ENTITY_ATTACK_PHASE.LAUNCHED
 			play_attack_animation()
 		else:
@@ -262,6 +285,34 @@ func _process(delta: float) -> void:
 			attackPhase=ENTITY_ATTACK_PHASE.NONE
 	if factoryTime>0:
 		factoryLoop(delta)
+	
+	if (type==ENTITY_TYPE.PLAYER and attackPhase==ENTITY_ATTACK_PHASE.BUILDER):
+		if Input.get_action_strength("change_mode")>0 and !hasChangedMode:
+			attackPhase==ENTITY_ATTACK_PHASE.NONE
+			previewInstance.queue_free()
+			previewInstance = null
+			hasChangedMode = true
+		else:
+			if Input.get_action_strength("attack") > 0:
+				if previewInstance and previewInstance.buildingPossible:
+					pass
+					
+			if Input.get_action_strength("choice1") > 0:
+				selectedBuilding = BUILDING_TYPE.BAKERY
+				previewInstance.set_hitbox_size(2, 2)  # Bakery is 2x2
+				previewInstance.set_sprite_animation("Bakery")
+				
+			if Input.get_action_strength("choice2") > 0:
+				selectedBuilding = BUILDING_TYPE.TOWER
+				previewInstance.set_hitbox_size(1, 2)  # Tower is 1x2
+				previewInstance.set_sprite_animation("Tower")
+				
+			if Input.get_action_strength("choice3") > 0:
+				pass
+			if Input.get_action_strength("choice4") > 0:
+				pass
+			if Input.get_action_strength("choice5") > 0:
+				pass
 
 func _physics_process(delta: float) -> void:
 	if type==ENTITY_TYPE.BUILDING:
@@ -272,6 +323,7 @@ func _physics_process(delta: float) -> void:
 		targetVelocity=Input.get_vector("move_left","move_right","move_up","move_down")
 		if not targetVelocity.is_zero_approx():
 			moving=true
+			lastDirection = targetVelocity
 		if attackPhase==ENTITY_ATTACK_PHASE.LAUNCHED:
 			targetVelocity/=3
 			if sprite.flip_h:
@@ -313,6 +365,25 @@ func _physics_process(delta: float) -> void:
 		
 	if type==ENTITY_TYPE.PLAYER:
 		camera.global_position=lerp(camera.global_position,global_position,delta*10)
+		if previewInstance:
+			# Calculate the offset based on lastDirection and building size
+			var half_size = previewInstance.hitbox_size * 16
+			var offset = lastDirection.normalized() * (32 + max(half_size.x, half_size.y))
+			var target_position = global_position + offset
+			
+			# Determine snapping based on the hitbox size (even or odd)
+			var size = previewInstance.hitbox_size
+			var snap_offset = Vector2(
+				16 if int(size.x) % 2 != 0 else 0,
+				16 if int(size.y) % 2 != 0 else 0
+			)
+			
+			# Snap into position
+			var snapped_position = (target_position - snap_offset).snapped(Vector2(32, 32)) + snap_offset
+			snapped_position -= half_size
+			previewInstance.global_position = snapped_position
+			previewInstance.check_validity()
+	
 	if attackPhase==ENTITY_ATTACK_PHASE.NONE:
 		if moving and velocity.length_squared() > 100:
 			play_walk_animation(velocity)

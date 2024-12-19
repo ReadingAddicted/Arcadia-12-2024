@@ -1,0 +1,87 @@
+[gd_scene load_steps=12 format=3 uid="uid://bb0bqwax481ws"]
+
+[ext_resource type="Script" path="res://Scripts/building_preview.gd" id="1_sv8co"]
+[ext_resource type="Texture2D" uid="uid://v0s2qjguvm1k" path="res://Sprites/minionSpawner.png" id="1_ybos6"]
+[ext_resource type="Texture2D" uid="uid://c8isr1i54h48s" path="res://Sprites/wizard tower.png" id="2_6fooc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8rjs2"]
+atlas = ExtResource("1_ybos6")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cr2kh"]
+atlas = ExtResource("2_6fooc")
+region = Rect2(0, 0, 32, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fko2a"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8rjs2")
+}],
+"loop": true,
+"name": &"Bakery",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cr2kh")
+}],
+"loop": true,
+"name": &"Tower",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Curve" id="Curve_5lday"]
+min_value = 0.99
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 1, Vector2(1, 1), 0.0, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_xw04c"]
+min_value = 0.99
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_cpoim"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_pbufd"]
+curve_x = SubResource("Curve_5lday")
+curve_y = SubResource("Curve_xw04c")
+curve_z = SubResource("Curve_cpoim")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uurja"]
+
+[node name="BuildingPreview" type="Node2D"]
+light_mask = 262144
+visibility_layer = 262144
+script = ExtResource("1_sv8co")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+light_mask = 262144
+visibility_layer = 262144
+sprite_frames = SubResource("SpriteFrames_fko2a")
+animation = &"Tower"
+
+[node name="Background" type="Sprite2D" parent="Sprite"]
+show_behind_parent = true
+light_mask = 262144
+visibility_layer = 262144
+scale = Vector2(0.252517, 65.9453)
+texture = SubResource("CurveXYZTexture_pbufd")
+
+[node name="IsValid" type="CanvasModulate" parent="Sprite/Background"]
+light_mask = 262144
+visibility_layer = 262144
+scale = Vector2(3.96012, 0.0151641)
+color = Color(0.482353, 1, 0.964706, 0.415686)
+
+[node name="TakenArea" type="Area2D" parent="."]
+
+[node name="Hitbox" type="CollisionShape2D" parent="TakenArea"]
+shape = SubResource("RectangleShape2D_uurja")

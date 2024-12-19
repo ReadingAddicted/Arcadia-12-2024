@@ -146,8 +146,6 @@ func spawn(whatModel:String,where:Vector2=Vector2.ZERO)->Entity:
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	var player = spawn("player",Vector2(-50,-50))
-	spawn("tower",Vector2(200,200))
-	spawn("bakery",Vector2(100,100))
 	player.team = true
 	$Background.modulate=Color(2,2,2)
 
